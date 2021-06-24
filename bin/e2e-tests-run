@@ -1,0 +1,61 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname $0)
+ROOT_DIR="${SCRIPT_DIR}/.."
+TARGET_DIR="${ROOT_DIR}/target"
+VERSION_FILE="${ROOT_DIR}/version.txt"
+RESOURCES_DIR=${ROOT_DIR}/test/resources
+
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+VERSION=$(cat "${VERSION_FILE}")
+APP="${TARGET_DIR}/uberjar/authorizer-${VERSION}-standalone.jar"
+
+E2E_TEST_TARGET_DIR="${TARGET_DIR}/e2e-tests"
+
+mkdir -p "${E2E_TEST_TARGET_DIR}"
+
+if [ ! -e "${APP}" ]
+then
+  echo "App is not built. Please run \`make build\` first"
+fi
+
+if [ ! -e "${VERSION_FILE}" ]
+then
+  echo "Error: Version file is missing."
+  exit 255
+fi
+
+e2e_test_run() {
+  TEST_NAME=$1
+
+  echo "==> Running End-2-End Test ${TEST_NAME}"
+
+  java -jar "${APP}" < "${RESOURCES_DIR}"/"${TEST_NAME}".in > "${E2E_TEST_TARGET_DIR}"/"${TEST_NAME}".out
+  diff -qbB "${E2E_TEST_TARGET_DIR}"/"${TEST_NAME}".out "${RESOURCES_DIR}"/"${TEST_NAME}".out
+
+
+  if [ "x$?" != "x0" ]
+  then
+    diff "${E2E_TEST_TARGET_DIR}"/"${TEST_NAME}".out "${RESOURCES_DIR}"/"${TEST_NAME}".out
+    echo -e "!!! Error: End-2-end Test: ${TEST_NAME} is ${RED}[FAILED]${NC}"
+    echo "Result is not equal to expected result."
+    exit 255
+  fi
+
+  echo -e "E2E Test ${TEST_NAME} is ${GREEN}[OK]${NC}"
+}
+
+echo "*** Running end-2-end Test ***"
+
+e2e_test_run e2e-test1
+e2e_test_run e2e-test2
+e2e_test_run e2e-test3
+e2e_test_run e2e-test4
+e2e_test_run e2e-test5
+e2e_test_run e2e-test6
+
+echo "End-2-End Tests Passed Successfully"

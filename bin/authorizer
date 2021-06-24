@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+SCRIPT_DIR=$(dirname "$0")
+
+VERSION=$(cat "${SCRIPT_DIR}/../version.txt")
+
+APP="${SCRIPT_DIR}/../target/uberjar/authorizer-${VERSION}-standalone.jar"
+
+if [ ! -e "${APP}" ]
+then
+  echo "App is not built. Please run \`make build\` first"
+  exit 255
+fi
+
+java -jar "${APP}"

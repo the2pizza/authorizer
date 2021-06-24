@@ -1,0 +1,5 @@
+{"account": {"active-card": true, "available-limit": 100}}
+{"transaction": {"merchant": "Habbib's", "amount": 5, "time": "2019-02-13T12:02:00.000Z"}}
+{"transaction": {"merchant": "KFC", "amount": 15, "time": "2019-02-13T12:02:05.000Z"}}
+{"transaction": {"merchant": "Habbib's", "amount": 25, "time": "2019-02-13T12:02:07.000Z"}}
+{"transaction": {"merchant": "Habbib's", "amount": 10, "time": "2019-02-13T12:02:09.000Z"}}
